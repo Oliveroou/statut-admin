@@ -90,13 +90,16 @@
 <div class="calendar" id="calendar"></div>
 
 <footer>
+  <div id="update-info"></div>
   &copy; 2025 Bravo Telecom - Calendar Dashboard N3/N4
 </footer>
+
 
 <script>
   const urlN3 = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSYg2w4YilJ0DPZF9bWsg_OiDt_XXJQGo53atPSEejUSi3xo9wbcfPSaM59ELl-R1ynm_CLXShP4NRs/pub?gid=188402740&single=true&output=csv";
   const urlN4 = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9caHFwMRkG9_70cLBfQONypOO1L1buWVD9Irq5g1pmxRwqj3WEwF97EQGO6NFBmwLUcApgLL5Cjxv/pub?gid=972554907&single=true&output=csv";
 
+ function loadData() {
   Promise.all([
     fetch(urlN3).then(r => r.text()),
     fetch(urlN4).then(r => r.text())
@@ -108,7 +111,17 @@
     const countsN4 = countDatesProper(dataN4, 7, '-');
 
     renderCalendar(2025, 5, countsN3, countsN4);
+    console.log("📅 Mise à jour automatique faite à : " + new Date().toLocaleTimeString());
   });
+}
+
+// Appel initial
+loadData();document.getElementById("update-info").textContent = "Dernière mise à jour : " + new Date().toLocaleTimeString();
+
+
+// Mise à jour toutes les 5 minutes (tu peux changer 5*60*1000 par autre chose)
+setInterval(loadData, 5 * 60 * 1000);
+
 
   function countDatesProper(data, columnIndex, sep = '-') {
     const counts = {};
