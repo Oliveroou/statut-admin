@@ -76,7 +76,7 @@ function countDatesProper(data, columnIndex, sep = '-') {
     if (parts.length !== 3) continue;
 
     const [dd, mm, yyyy] = parts;
-    if (mm === '05' && yyyy === '2025') {
+    if (mm === '06' && yyyy === '2025') {
       const day = parseInt(dd, 10);
       counts[day] = (counts[day] || 0) + 1;
     }
