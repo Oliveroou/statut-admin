@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>June 2025 Calendar - N3 & N4</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
   <style>
@@ -15,21 +15,27 @@
     header {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center; /* Centre horizontalement le contenu */
       padding: 30px 20px 10px;
       background-color: white;
       border-bottom: 2px solid #ddd;
+      position: relative; /* pour positionnement absolu du logo */
     }
 
     header img {
       height: 60px;
+      position: absolute;
+      left: 20px; /* garde le logo à gauche */
     }
 
     h1 {
       margin-top: 10px;
       font-size: 28px;
       color: #333;
-      margin-left: 20px;
+      margin-left: 0;
+      text-align: center;
+      width: 100%; /* occupe toute la largeur pour bien centrer */
+      pointer-events: none; /* pour éviter que le titre gêne la sélection du logo */
     }
 
     .calendar {
@@ -83,7 +89,7 @@
 <body>
 
 <header>
-  <img src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Bravo_telecom_logo.png" alt="Bravo Telecom Logo">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Bravo_telecom_logo.png" alt="Bravo Telecom Logo" />
   <h1>June 2025 - N3 & N4 Calendar Overview</h1>
 </header>
 
@@ -94,34 +100,32 @@
   &copy; 2025 Bravo Telecom - Calendar Dashboard N3/N4
 </footer>
 
-
 <script>
   const urlN3 = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSYg2w4YilJ0DPZF9bWsg_OiDt_XXJQGo53atPSEejUSi3xo9wbcfPSaM59ELl-R1ynm_CLXShP4NRs/pub?gid=188402740&single=true&output=csv";
   const urlN4 = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9caHFwMRkG9_70cLBfQONypOO1L1buWVD9Irq5g1pmxRwqj3WEwF97EQGO6NFBmwLUcApgLL5Cjxv/pub?gid=972554907&single=true&output=csv";
 
- function loadData() {
-  Promise.all([
-    fetch(urlN3).then(r => r.text()),
-    fetch(urlN4).then(r => r.text())
-  ]).then(([textN3, textN4]) => {
-    const dataN3 = Papa.parse(textN3, { header: false }).data;
-    const dataN4 = Papa.parse(textN4, { header: false }).data;
+  function loadData() {
+    Promise.all([
+      fetch(urlN3).then(r => r.text()),
+      fetch(urlN4).then(r => r.text())
+    ]).then(([textN3, textN4]) => {
+      const dataN3 = Papa.parse(textN3, { header: false }).data;
+      const dataN4 = Papa.parse(textN4, { header: false }).data;
 
-    const countsN3 = countDatesProper(dataN3, 5, '-');
-    const countsN4 = countDatesProper(dataN4, 7, '-');
+      const countsN3 = countDatesProper(dataN3, 5, '-');
+      const countsN4 = countDatesProper(dataN4, 7, '-');
 
-    renderCalendar(2025, 5, countsN3, countsN4);
-    console.log("📅 Mise à jour automatique faite à : " + new Date().toLocaleTimeString());
-  });
-}
+      renderCalendar(2025, 5, countsN3, countsN4);
+      document.getElementById("update-info").textContent = "Dernière mise à jour : " + new Date().toLocaleTimeString();
+      console.log("📅 Mise à jour automatique faite à : " + new Date().toLocaleTimeString());
+    });
+  }
 
-// Appel initial
-loadData();document.getElementById("update-info").textContent = "Dernière mise à jour : " + new Date().toLocaleTimeString();
+  // Appel initial
+  loadData();
 
-
-// Mise à jour toutes les 5 minutes (tu peux changer 2*60*1000 par autre chose)
-setInterval(loadData, 2 * 60 * 1000);
-
+  // Mise à jour toutes les 5 minutes (2*60*1000 ms)
+  setInterval(loadData, 2 * 60 * 1000);
 
   function countDatesProper(data, columnIndex, sep = '-') {
     const counts = {};
