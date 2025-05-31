@@ -119,8 +119,8 @@
 loadData();document.getElementById("update-info").textContent = "Dernière mise à jour : " + new Date().toLocaleTimeString();
 
 
-// Mise à jour toutes les 5 minutes (tu peux changer 5*60*1000 par autre chose)
-setInterval(loadData, 5 * 60 * 1000);
+// Mise à jour toutes les 5 minutes (tu peux changer 2*60*1000 par autre chose)
+setInterval(loadData, 2 * 60 * 1000);
 
 
   function countDatesProper(data, columnIndex, sep = '-') {
