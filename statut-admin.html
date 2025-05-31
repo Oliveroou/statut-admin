@@ -2,11 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>June 2025 Calendar - N3 & N4</title>
+  <title>May 2025 Calendar - N3 & N4</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
   <style>
     body { font-family: Arial, sans-serif; padding: 20px; }
-    h1 { text-align: center; }
     .calendar {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
@@ -42,12 +41,17 @@
 </head>
 <body>
 
-<h1>June 2025 Calendar</h1>
+<!-- Logo + Titre -->
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/2/28/Bravo_telecom_logo.png" alt="Logo Bravo Telecom" style="height: 60px;">
+  <h1 style="flex: 1; text-align: center; margin: 0;">May 2025 Calendar</h1>
+</div>
+
 <div class="calendar" id="calendar"></div>
 
 <script>
-const urlN3 = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSYg2w4YilJ0DPZF9bWsg_OiDt_XXJQGo53atPSEejUSi3xo9wbcfPSaM59ELl-R1ynm_CLXShP4NRs/pub?gid=188402740&single=true&output=csv";
-const urlN4 = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9caHFwMRkG9_70cLBfQONypOO1L1buWVD9Irq5g1pmxRwqj3WEwF97EQGO6NFBmwLUcApgLL5Cjxv/pub?gid=972554907&single=true&output=csv";
+const urlN3 = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSYg2w4YilJ0DPZF9bWsg_OiDt_XXJQGo53atPSEejUSi3xo9wbcfPSaM59ELl-R1ynm_CLXShP4NRs/pub?gid=1655796170&single=true&output=csv";
+const urlN4 = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9caHFwMRkG9_70cLBfQONypOO1L1buWVD9Irq5g1pmxRwqj3WEwF97EQGO6NFBmwLUcApgLL5Cjxv/pub?gid=1980224172&single=true&output=csv";
 
 Promise.all([
   fetch(urlN3).then(r => r.text()),
@@ -56,10 +60,10 @@ Promise.all([
   const dataN3 = Papa.parse(textN3, { header: false }).data;
   const dataN4 = Papa.parse(textN4, { header: false }).data;
 
-  const countsN3 = countDatesProper(dataN3, 5, '-'); // Column F = index 5
-  const countsN4 = countDatesProper(dataN4, 7, '-'); // Column H = index 7
+  const countsN3 = countDatesProper(dataN3, 5, '-'); // Colonne F
+  const countsN4 = countDatesProper(dataN4, 7, '-'); // Colonne H
 
-  renderCalendar(2025, 5, countsN3, countsN4); // 5 = Juin (0 = Janvier)
+  renderCalendar(2025, 4, countsN3, countsN4); // Mois de mai (index 4)
 });
 
 function countDatesProper(data, columnIndex, sep = '-') {
@@ -75,7 +79,7 @@ function countDatesProper(data, columnIndex, sep = '-') {
     if (parts.length !== 3) continue;
 
     const [dd, mm, yyyy] = parts;
-    if (mm === '06' && yyyy === '2025') {
+    if (mm === '05' && yyyy === '2025') {
       const day = parseInt(dd, 10);
       counts[day] = (counts[day] || 0) + 1;
     }
