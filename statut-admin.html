@@ -1,145 +1,137 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Statut Technicien avec Admin</title>
+  <meta charset="UTF-8">
+  <title>May 2025 Calendar - N3 & N4</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
   <style>
-    body { font-family: Arial, sans-serif; text-align: center; padding-top: 40px; }
-    input, button { padding: 10px; font-size: 16px; margin: 10px; }
-    #statut { margin-top: 30px; font-size: 22px; font-weight: bold; }
-    .vert { color: #155724; background-color: #d4edda; padding: 10px; border-radius: 5px; }
-    .jaune { color: #856404; background-color: #fff3cd; padding: 10px; border-radius: 5px; }
-    .rouge { color: #721c24; background-color: #f8d7da; padding: 10px; border-radius: 5px; }
-    #admin-section { 
-      margin-top: 40px; 
-      border-top: 2px solid #ccc; 
-      padding-top: 20px; 
-      display: none; 
-      max-width: 400px; margin-left:auto; margin-right:auto;
-      text-align: left;
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    h1 { text-align: center; }
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 1px;
+      background: #ccc;
+      max-width: 800px;
+      margin: auto;
     }
-    label { display: block; margin-top: 10px; }
-    #admin-login { margin-bottom: 20px; }
+    .day, .header {
+      background: white;
+      padding: 10px;
+      min-height: 80px;
+      border: 1px solid #ddd;
+      box-sizing: border-box;
+    }
+    .header {
+      font-weight: bold;
+      text-align: center;
+      background: #f4f4f4;
+    }
+    .day span {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .day[data-has="true"] {
+      background-color: #e8faff;
+    }
+    .green { color: green; font-weight: bold; }
+.yellow { color: orange; font-weight: bold; }
+.red { color: red; font-weight: bold; }
+
   </style>
 </head>
 <body>
 
-  <h2>Consulter le statut du technicien</h2>
+<h1>May 2025 Calendar</h1>
+<div class="calendar" id="calendar"></div>
 
-  <input type="text" id="input-tech" placeholder="Entrez Tech N3 ou Tech N4" />
-  <button onclick="afficherStatut()">Afficher Statut</button>
+<script>
+const urlN3 = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSYg2w4YilJ0DPZF9bWsg_OiDt_XXJQGo53atPSEejUSi3xo9wbcfPSaM59ELl-R1ynm_CLXShP4NRs/pub?gid=1655796170&single=true&output=csv";
+const urlN4 = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9caHFwMRkG9_70cLBfQONypOO1L1buWVD9Irq5g1pmxRwqj3WEwF97EQGO6NFBmwLUcApgLL5Cjxv/pub?gid=1980224172&single=true&output=csv";
 
-  <div id="statut"></div>
+Promise.all([
+  fetch(urlN3).then(r => r.text()),
+  fetch(urlN4).then(r => r.text())
+]).then(([textN3, textN4]) => {
+  const dataN3 = Papa.parse(textN3, { header: false }).data;
+  const dataN4 = Papa.parse(textN4, { header: false }).data;
 
-  <button id="admin-toggle-btn" style="margin-top:40px;">🔐 Admin (cliquez ici)</button>
+  const countsN3 = countDatesProper(dataN3, 5, '-'); // Column F = index 5
+  const countsN4 = countDatesProper(dataN4, 7, '-'); // Column H = index 7
 
-  <div id="admin-section">
-    <div id="admin-login">
-      <label for="admin-password">Mot de passe Admin :</label>
-      <input type="password" id="admin-password" />
-      <button onclick="verifierMotDePasse()">Valider</button>
-      <div id="admin-msg" style="color:red; margin-top: 10px;"></div>
-    </div>
+  renderCalendar(2025, 4, countsN3, countsN4);
+});
 
-    <div id="admin-form" style="display:none;">
-      <label for="clients-n3">Clients Tech N3 :</label>
-      <input type="number" id="clients-n3" min="0" />
+function countDatesProper(data, columnIndex, sep = '-') {
+  const counts = {};
+  for (let i = 1; i < data.length; i++) {
+    const row = data[i];
+    if (!row || row.length <= columnIndex) continue;
 
-      <label for="clients-n4">Clients Tech N4 :</label>
-      <input type="number" id="clients-n4" min="0" />
+    let value = (row[columnIndex] || '').toString().trim().replace(/"/g, '');
+    if (!value.includes('-') && !value.includes('/')) continue;
 
-      <button onclick="mettreAJourClients()">Mettre à jour</button>
-      <div id="admin-success" style="color:green; margin-top:10px;"></div>
-    </div>
-  </div>
+    let parts = value.includes('-') ? value.split('-') : value.split('/');
+    if (parts.length !== 3) continue;
 
-  <script>
-    // Initial données (modifiable via admin)
-    let clientsParTechnicien = {
-      "tech n3": 0,
-      "tech n4": 0
-    };
-
-    function afficherStatut() {
-      const entree = document.getElementById("input-tech").value.trim().toLowerCase();
-      const nbClients = clientsParTechnicien[entree];
-      const statutDiv = document.getElementById("statut");
-      statutDiv.className = ""; // reset
-
-      if (nbClients === undefined) {
-        statutDiv.textContent = "Technicien inconnu.";
-        return;
-      }
-
-      if (nbClients < 2) {
-        statutDiv.textContent = "✅ Vert (Moins de 2)";
-        statutDiv.classList.add("vert");
-      } else if (nbClients >= 2 && nbClients < 5) {
-        statutDiv.textContent = "🟡 Jaune (Entre 2 et 4)";
-        statutDiv.classList.add("jaune");
-      } else {
-        statutDiv.textContent = "🔴 Rouge (5 ou plus)";
-        statutDiv.classList.add("rouge");
-      }
+    const [dd, mm, yyyy] = parts;
+    if (mm === '05' && yyyy === '2025') {
+      const day = parseInt(dd, 10);
+      counts[day] = (counts[day] || 0) + 1;
     }
+  }
+  return counts;
+}
 
-    // Gestion Admin
 
-    document.getElementById("admin-toggle-btn").addEventListener("click", () => {
-      const adminSection = document.getElementById("admin-section");
-      adminSection.style.display = (adminSection.style.display === "none" || adminSection.style.display === "") ? "block" : "none";
-      clearAdminFields();
-    });
+function renderCalendar(year, monthIndex, n3Data, n4Data) {
+  const container = document.getElementById("calendar");
+  container.innerHTML = '';
 
-    function verifierMotDePasse() {
-      const mdp = document.getElementById("admin-password").value;
-      const msg = document.getElementById("admin-msg");
-      const formAdmin = document.getElementById("admin-form");
-      const successMsg = document.getElementById("admin-success");
-      successMsg.textContent = "";
+  const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  daysOfWeek.forEach(day => {
+    const div = document.createElement('div');
+    div.className = 'header';
+    div.textContent = day;
+    container.appendChild(div);
+  });
 
-      // Change le mot de passe ici :
-      const motDePasseCorrect = "bravo123";
+  const firstDay = new Date(year, monthIndex, 1);
+  const totalDays = new Date(year, monthIndex + 1, 0).getDate();
+  const startOffset = firstDay.getDay();
 
-      if (mdp === motDePasseCorrect) {
-        msg.textContent = "";
-        formAdmin.style.display = "block";
-        // Remplir les inputs avec les valeurs actuelles
-        document.getElementById("clients-n3").value = clientsParTechnicien["tech n3"];
-        document.getElementById("clients-n4").value = clientsParTechnicien["tech n4"];
-      } else {
-        msg.textContent = "Mot de passe incorrect.";
-        formAdmin.style.display = "none";
-      }
-    }
+  for (let i = 0; i < startOffset; i++) {
+    container.appendChild(document.createElement('div')).className = 'day';
+  }
 
-    function mettreAJourClients() {
-      const n3 = parseInt(document.getElementById("clients-n3").value);
-      const n4 = parseInt(document.getElementById("clients-n4").value);
-      const successMsg = document.getElementById("admin-success");
+  for (let day = 1; day <= totalDays; day++) {
+    const div = document.createElement('div');
+    div.className = 'day';
+    const n3 = n3Data[day] || 0;
+    const n4 = n4Data[day] || 0;
 
-      if (isNaN(n3) || isNaN(n4) || n3 < 0 || n4 < 0) {
-        alert("Veuillez entrer des nombres valides (0 ou plus).");
-        return;
-      }
+    let n3Class = '';
+    if (n3 <= 2) n3Class = 'green';
+    else if (n3 <= 4) n3Class = 'yellow';
+    else n3Class = 'red';
 
-      clientsParTechnicien["tech n3"] = n3;
-      clientsParTechnicien["tech n4"] = n4;
+    let n4Class = '';
+    if (n4 <= 2) n4Class = 'green';
+    else if (n4 <= 4) n4Class = 'yellow';
+    else n4Class = 'red';
 
-      successMsg.textContent = "Mise à jour effectuée avec succès !";
-      // Réafficher le statut si le tech est déjà rempli
-      afficherStatut();
-    }
+    div.dataset.has = (n3 > 0 || n4 > 0) ? "true" : "false";
+    div.innerHTML = `
+      <span>${day}</span>
+      <span class="${n3Class}">n3 = ${n3}</span><br>
+      <span class="${n4Class}">n4 = ${n4}</span><br>
+    `;
+    container.appendChild(div);
+  }
+}
 
-    function clearAdminFields() {
-      document.getElementById("admin-password").value = "";
-      document.getElementById("admin-msg").textContent = "";
-      document.getElementById("admin-success").textContent = "";
-      document.getElementById("admin-form").style.display = "none";
-      document.getElementById("clients-n3").value = "";
-      document.getElementById("clients-n4").value = "";
-    }
-  </script>
+</script>
 
 </body>
 </html>
