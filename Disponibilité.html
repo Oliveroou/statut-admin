@@ -1,89 +1,126 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>Disponibilité Juin 2025 - Tech N3 & N4</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-<style>
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f9f9f9;
-    margin: 0; padding: 0;
-  }
-  header {
-    display: flex; align-items: center; justify-content: center;
-    padding: 30px 20px 10px; background-color: white; border-bottom: 2px solid #ddd; position: relative;
-  }
-  header img {
-    height: 60px; position: absolute; left: 20px;
-  }
-  h1 {
-    margin-top: 10px; font-size: 28px; color: #333; margin-left: 0; text-align: center; width: 100%; pointer-events: none;
-  }
-  .calendar {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr); /* 6 colonnes Lundi-Samedi */
-    gap: 1px;
-    background: #ccc;
-    max-width: 1000px;
-    margin: 30px auto;
-    border: 1px solid #ccc;
-  }
-  .day, .header {
-    background: white; /* Fond blanc simple */
-    padding: 10px;
-    min-height: 100px;
-    border: 1px solid #ddd;
-    box-sizing: border-box;
-    text-align: center;
-  }
-  .header {
-    font-weight: bold;
-    background: #f4f4f4;
-  }
-  .day span:first-child {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 8px;
-    font-size: 18px;
-    color: #444;
-  }
-  /* Légende couleurs */
-  .legend {
-    max-width: 1000px;
-    margin: 20px auto;
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-  }
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: bold;
-    font-size: 16px;
-    color: #333;
-  }
-  .color-box {
-    width: 20px;
-    height: 20px;
-    border-radius: 4px;
-  }
-  .green { background-color: #28a745; }
-  .yellow { background-color: #ffc107; }
-  .red { background-color: #dc3545; }
+  <meta charset="UTF-8" />
+  <title>Disponibilité Juin 2025 - Tech N3 & N4</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 0;
+    }
 
-  /* Texte des chiffres dans le jour */
-  .count-n3 { color: #007bff; font-weight: bold; }
-  .count-n4 { color: #17a2b8; font-weight: bold; }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 30px 20px 10px;
+      background-color: white;
+      border-bottom: 2px solid #ddd;
+      position: relative;
+    }
 
-  footer {
-    text-align: center;
-    padding: 20px;
-    font-size: 14px;
-    color: #777;
-  }
-</style>
+    header img {
+      height: 60px;
+      position: absolute;
+      left: 20px;
+    }
+
+    h1 {
+      margin-top: 10px;
+      font-size: 28px;
+      color: #333;
+      margin-left: 0;
+      text-align: center;
+      width: 100%;
+      pointer-events: none;
+    }
+
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 1px;
+      background: #ccc;
+      max-width: 1000px;
+      margin: 30px auto;
+      border: 1px solid #ccc;
+    }
+
+    .day, .header {
+      background: white;
+      padding: 10px;
+      min-height: 100px;
+      border: 1px solid #ddd;
+      box-sizing: border-box;
+    }
+
+    .header {
+      font-weight: bold;
+      text-align: center;
+      background: #f4f4f4;
+    }
+
+    .day span:first-child {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+      font-size: 16px;
+      color: #444;
+    }
+
+    .day[data-has="true"] {
+      background-color: #f0f9ff;
+    }
+
+    .green { color: green; font-weight: bold; }
+    .yellow { color: orange; font-weight: bold; }
+    .red { color: red; font-weight: bold; }
+
+    /* Légende juste en dessous du calendrier */
+    .legend {
+      max-width: 1000px;
+      margin: 0 auto 30px auto;
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      font-weight: bold;
+      font-size: 16px;
+      color: #333;
+    }
+
+    .legend div {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .legend .box {
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+    }
+
+    .legend .box.red {
+      background-color: red;
+    }
+
+    .legend .box.yellow {
+      background-color: orange;
+    }
+
+    .legend .box.green {
+      background-color: green;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 14px;
+      color: #777;
+    }
+  </style>
 </head>
 <body>
 
@@ -94,10 +131,11 @@
 
 <div class="calendar" id="calendar"></div>
 
+<!-- Légende ajoutée ici -->
 <div class="legend">
-  <div class="legend-item"><div class="color-box green"></div> ≤ 2 (Vert)</div>
-  <div class="legend-item"><div class="color-box yellow"></div> Entre 3 et 4 (Jaune)</div>
-  <div class="legend-item"><div class="color-box red"></div> ≥ 5 (Rouge)</div>
+  <div><div class="box red"></div> Plein</div>
+  <div><div class="box yellow"></div> Prend une deuxième date</div>
+  <div><div class="box green"></div> Dispo</div>
 </div>
 
 <footer>
@@ -117,29 +155,30 @@
       const dataN3 = Papa.parse(textN3, { header: false }).data;
       const dataN4 = Papa.parse(textN4, { header: false }).data;
 
-      const countsN3 = countDates(dataN3, 5, '-');
-      const countsN4 = countDates(dataN4, 7, '-');
+      const countsN3 = countDatesProper(dataN3, 5, '-');
+      const countsN4 = countDatesProper(dataN4, 7, '-');
 
       renderCalendar(2025, 5, countsN3, countsN4);
       document.getElementById("update-info").textContent = "Dernière mise à jour : " + new Date().toLocaleTimeString();
-    }).catch(err => {
-      console.error('Erreur chargement données:', err);
-      document.getElementById("update-info").textContent = "Erreur lors du chargement des données";
+      console.log("📅 Mise à jour automatique faite à : " + new Date().toLocaleTimeString());
     });
   }
 
   loadData();
   setInterval(loadData, 1000);
 
-  function countDates(data, colIndex, sep='-') {
+  function countDatesProper(data, columnIndex, sep = '-') {
     const counts = {};
     for (let i = 1; i < data.length; i++) {
       const row = data[i];
-      if (!row || row.length <= colIndex) continue;
-      let val = (row[colIndex] || '').toString().trim().replace(/"/g, '');
-      if (!val.includes(sep)) continue;
-      let parts = val.split(sep);
+      if (!row || row.length <= columnIndex) continue;
+
+      let value = (row[columnIndex] || '').toString().trim().replace(/"/g, '');
+      if (!value.includes('-') && !value.includes('/')) continue;
+
+      let parts = value.includes('-') ? value.split('-') : value.split('/');
       if (parts.length !== 3) continue;
+
       const [dd, mm, yyyy] = parts;
       if (mm === '06' && yyyy === '2025') {
         const day = parseInt(dd, 10);
@@ -153,7 +192,7 @@
     const container = document.getElementById("calendar");
     container.innerHTML = '';
 
-    const daysOfWeek = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+    const daysOfWeek = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
     daysOfWeek.forEach(day => {
       const div = document.createElement('div');
       div.className = 'header';
@@ -163,29 +202,27 @@
 
     const firstDay = new Date(year, monthIndex, 1);
     const totalDays = new Date(year, monthIndex + 1, 0).getDate();
+    const startOffset = firstDay.getDay();
 
-    const startOffset = firstDay.getDay() === 0 ? 6 : firstDay.getDay() -1;
-
-    for(let i=0; i < startOffset; i++) {
-      const emptyDiv = document.createElement('div');
-      emptyDiv.className = 'day';
-      container.appendChild(emptyDiv);
+    for (let i = 0; i < startOffset; i++) {
+      container.appendChild(document.createElement('div')).className = 'day';
     }
 
-    for(let day=1; day <= totalDays; day++) {
-      const date = new Date(year, monthIndex, day);
-      if (date.getDay() === 0) continue;
-
+    for (let day = 1; day <= totalDays; day++) {
       const div = document.createElement('div');
       div.className = 'day';
-
       const n3 = n3Data[day] || 0;
       const n4 = n4Data[day] || 0;
 
-      div.innerHTML = `<span>${day}</span>
-        <span class="count-n3">N3 = ${n3}</span><br>
-        <span class="count-n4">N4 = ${n4}</span>`;
+      let n3Class = n3 <= 2 ? 'green' : (n3 <= 4 ? 'yellow' : 'red');
+      let n4Class = n4 <= 2 ? 'green' : (n4 <= 4 ? 'yellow' : 'red');
 
+      div.dataset.has = (n3 > 0 || n4 > 0) ? "true" : "false";
+      div.innerHTML = `
+        <span>${day}</span>
+        <span class="${n3Class}">N3 = ${n3}</span><br>
+        <span class="${n4Class}">N4 = ${n4}</span>
+      `;
       container.appendChild(div);
     }
   }
