@@ -94,6 +94,24 @@
 </header>
 
 <div class="calendar" id="calendar"></div>
+<!-- Légende des couleurs -->
+<div style="max-width: 1000px; margin: 20px auto; padding: 15px; background: #fff; border: 1px solid #ddd; border-radius: 6px;">
+  <h3 style="margin-top: 0;">Légende des couleurs :</h3>
+  <ul style="list-style: none; padding-left: 0; display: flex; justify-content: space-around; font-weight: bold;">
+    <li style="display: flex; align-items: center;">
+      <span style="display: inline-block; width: 20px; height: 20px; background-color: red; margin-right: 8px; border-radius: 3px;"></span>
+      Plein
+    </li>
+    <li style="display: flex; align-items: center;">
+      <span style="display: inline-block; width: 20px; height: 20px; background-color: orange; margin-right: 8px; border-radius: 3px;"></span>
+      Prend une 2<sup>ème</sup> date
+    </li>
+    <li style="display: flex; align-items: center;">
+      <span style="display: inline-block; width: 20px; height: 20px; background-color: green; margin-right: 8px; border-radius: 3px;"></span>
+      Dispo
+    </li>
+  </ul>
+</div>
 
 <footer>
   <div id="update-info"></div>
@@ -187,23 +205,6 @@
     }
   }
 </script>
-<div style="margin-top: 30px; padding: 15px; background-color: #f9f9f9; border-top: 2px solid #ccc;">
-  <h4 style="margin-bottom: 10px;">Légende des couleurs :</h4>
-  <ul style="list-style: none; padding: 0; display: flex; gap: 20px;">
-    <li style="display: flex; align-items: center;">
-      <span style="display: inline-block; width: 20px; height: 20px; background-color: red; margin-right: 8px; border-radius: 3px;"></span>
-      Plein
-    </li>
-    <li style="display: flex; align-items: center;">
-      <span style="display: inline-block; width: 20px; height: 20px; background-color: yellow; margin-right: 8px; border-radius: 3px; border: 1px solid #ccc;"></span>
-      Prend une deuxième date
-    </li>
-    <li style="display: flex; align-items: center;">
-      <span style="display: inline-block; width: 20px; height: 20px; background-color: green; margin-right: 8px; border-radius: 3px;"></span>
-      Dispo
-    </li>
-  </ul>
-</div>
 
 </body>
 </html>
