@@ -142,8 +142,8 @@
   // Appel initial
   loadData();
 
-  // Mise à jour toutes les 5 minutes (2*60*1000 ms)
-  setInterval(loadData, 2 * 60 * 1000);
+ // Mise à jour toutes les 15 seconde (15000 ms)
+setInterval(loadData, 15000); // mise à jour toutes les 15 secondes
 
   function countDatesProper(data, columnIndex, sep = '-') {
     const counts = {};
