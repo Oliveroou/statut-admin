@@ -189,43 +189,56 @@
   }
 
   function renderCalendar(year, monthIndex, n3Data, n4Data) {
-    const container = document.getElementById("calendar");
-    container.innerHTML = '';
+  const container = document.getElementById("calendar");
+  container.innerHTML = '';
 
-    const daysOfWeek = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
-    daysOfWeek.forEach(day => {
-      const div = document.createElement('div');
-      div.className = 'header';
-      div.textContent = day;
-      container.appendChild(div);
-    });
+  // Jours de la semaine sans dimanche
+  const daysOfWeek = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+  daysOfWeek.forEach(day => {
+    const div = document.createElement('div');
+    div.className = 'header';
+    div.textContent = day;
+    container.appendChild(div);
+  });
 
-    const firstDay = new Date(year, monthIndex, 1);
-    const totalDays = new Date(year, monthIndex + 1, 0).getDate();
-    const startOffset = firstDay.getDay();
+  const firstDay = new Date(year, monthIndex, 1);
+  const totalDays = new Date(year, monthIndex + 1, 0).getDate();
 
-    for (let i = 0; i < startOffset; i++) {
-      container.appendChild(document.createElement('div')).className = 'day';
-    }
+  // On calcule le jour de la semaine du 1er (0 = dimanche, 1 = lundi ...)
+  // On veut décaler pour commencer à lundi = 0
+  let startOffset = firstDay.getDay() - 1;
+  if (startOffset < 0) startOffset = 6; // si dimanche, mettre samedi (fin de semaine)
 
-    for (let day = 1; day <= totalDays; day++) {
-      const div = document.createElement('div');
-      div.className = 'day';
-      const n3 = n3Data[day] || 0;
-      const n4 = n4Data[day] || 0;
-
-      let n3Class = n3 <= 2 ? 'green' : (n3 <= 4 ? 'yellow' : 'red');
-      let n4Class = n4 <= 2 ? 'green' : (n4 <= 4 ? 'yellow' : 'red');
-
-      div.dataset.has = (n3 > 0 || n4 > 0) ? "true" : "false";
-      div.innerHTML = `
-        <span>${day}</span>
-        <span class="${n3Class}">N3 = ${n3}</span><br>
-        <span class="${n4Class}">N4 = ${n4}</span>
-      `;
-      container.appendChild(div);
-    }
+  // Ajouter des cases vides pour décaler le début (à partir de lundi)
+  for (let i = 0; i < startOffset; i++) {
+    container.appendChild(document.createElement('div')).className = 'day';
   }
+
+  for (let day = 1; day <= totalDays; day++) {
+    const currentDate = new Date(year, monthIndex, day);
+    const dayOfWeek = currentDate.getDay();
+
+    // Skip dimanche (0)
+    if (dayOfWeek === 0) continue;
+
+    const div = document.createElement('div');
+    div.className = 'day';
+    const n3 = n3Data[day] || 0;
+    const n4 = n4Data[day] || 0;
+
+    let n3Class = n3 <= 2 ? 'green' : (n3 <= 4 ? 'yellow' : 'red');
+    let n4Class = n4 <= 2 ? 'green' : (n4 <= 4 ? 'yellow' : 'red');
+
+    div.dataset.has = (n3 > 0 || n4 > 0) ? "true" : "false";
+    div.innerHTML = `
+      <span>${day}</span>
+      <span class="${n3Class}">N3 = ${n3}</span><br>
+      <span class="${n4Class}">N4 = ${n4}</span>
+    `;
+    container.appendChild(div);
+  }
+}
+
 </script>
 
 </body>
