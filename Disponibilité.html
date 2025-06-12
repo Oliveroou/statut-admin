@@ -30,7 +30,7 @@
     border: 1px solid #ccc;
   }
   .day, .header {
-    background: white;
+    background: white; /* Fond blanc simple */
     padding: 10px;
     min-height: 100px;
     border: 1px solid #ddd;
@@ -69,9 +69,9 @@
     height: 20px;
     border-radius: 4px;
   }
-  .green { background-color: #28a745; color: #155724; }
-  .yellow { background-color: #ffc107; color: #856404; }
-  .red { background-color: #dc3545; color: #721c24; }
+  .green { background-color: #28a745; }
+  .yellow { background-color: #ffc107; }
+  .red { background-color: #dc3545; }
 
   /* Texte des chiffres dans le jour */
   .count-n3 { color: #007bff; font-weight: bold; }
@@ -164,10 +164,8 @@
     const firstDay = new Date(year, monthIndex, 1);
     const totalDays = new Date(year, monthIndex + 1, 0).getDate();
 
-    // Décalage : dimanche=0 => on remplace par 6, sinon -1 pour décaler à Lundi=0
     const startOffset = firstDay.getDay() === 0 ? 6 : firstDay.getDay() -1;
 
-    // Cases vides avant le 1er jour
     for(let i=0; i < startOffset; i++) {
       const emptyDiv = document.createElement('div');
       emptyDiv.className = 'day';
@@ -176,7 +174,7 @@
 
     for(let day=1; day <= totalDays; day++) {
       const date = new Date(year, monthIndex, day);
-      if (date.getDay() === 0) continue; // skip dimanche
+      if (date.getDay() === 0) continue;
 
       const div = document.createElement('div');
       div.className = 'day';
